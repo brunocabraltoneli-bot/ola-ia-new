@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { ArrowLeft, Send } from "lucide-react";
+import { sendMessageToOpenAI, type Message as OpenAIMessage } from "@/services/openai";
 
 const Chat = () => {
   const goHome = () => {
@@ -9,26 +10,58 @@ const Chat = () => {
   };
 
   const [inputMessage, setInputMessage] = useState("");
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Array<{ id: number; text: string; sender: "user" | "ai" }>>([
     { id: 1, text: "Olá! Sou uma IA assistente. Como posso ajudar você hoje?", sender: "ai" },
-    { id: 2, text: "Oi! Quero testar esse chat.", sender: "user" },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
-    const newUserMessage = { id: messages.length + 1, text: inputMessage, sender: "user" };
-    setMessages((prev) => [...prev, newUserMessage]);
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+
+    const userMessage = inputMessage.trim();
     setInputMessage("");
+    
+    // Add user message to chat
+    const newUserMessage = { id: messages.length + 1, text: userMessage, sender: "user" as const };
+    setMessages((prev) => [...prev, newUserMessage]);
 
-    // Simulated AI response
-    setTimeout(() => {
-      const aiResponse = { 
+    setIsLoading(true);
+
+    try {
+      // Prepare messages for OpenAI API
+      const conversationHistory: OpenAIMessage[] = [
+        { role: "system", content: "Você é um assistente virtual amigável e inteligente. Responda de forma clara e útil." },
+        ...messages.map(msg => ({
+          role: msg.sender === "user" ? "user" : "assistant" as const,
+          content: msg.text,
+        })),
+        { role: "user", content: userMessage },
+      ];
+
+      // Send to OpenAI API
+      const aiResponse = await sendMessageToOpenAI(conversationHistory);
+
+      // Add AI response to chat
+      const newAiMessage = { id: messages.length + 2, text: aiResponse, sender: "ai" as const };
+      setMessages((prev) => [...prev, newAiMessage]);
+    } catch (error) {
+      console.error("Error communicating with OpenAI:", error);
+      const errorMessage = { 
         id: messages.length + 2, 
-        text: "Entendi! Estou aqui para ajudar. O que você gostaria de saber?", 
-        sender: "ai" 
+        text: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.", 
+        sender: "ai" as const 
       };
-      setMessages((prev) => [...prev, aiResponse]);
-    }, 1000);
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   return (
@@ -63,6 +96,18 @@ const Chat = () => {
               {message.text}
             </div>
           ))}
+          
+          {/* Loading indicator */}
+          {isLoading && (
+            <div className="mr-auto bg-white text-gray-800 rounded-bl-md rounded-2xl shadow-sm p-4 max-w-[80%]">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <span className="ml-2 text-gray-600">Pensando...</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -72,16 +117,20 @@ const Chat = () => {
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+          onKeyPress={handleKeyPress}
           placeholder="Digite sua mensagem..."
           className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-400 p-2"
+          disabled={isLoading}
         />
         <button
           onClick={handleSendMessage}
-          className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2 font-medium"
+          disabled={isLoading || !inputMessage.trim()}
+          className={`bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2 font-medium ${
+            isLoading || !inputMessage.trim() ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
           <Send size={18} />
-          Enviar
+          {isLoading ? 'Enviando...' : 'Enviar'}
         </button>
       </div>
     </div>
