@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ArrowLeft, Send } from "lucide-react";
-import { sendMessageToOpenAI, type Message as OpenAIMessage } from "@/services/openai";
+import { fetchAIReply, type ChatMessage } from "@/services/chatApi";
 
 const Chat = () => {
   const goHome = () => {
@@ -18,40 +18,38 @@ const Chat = () => {
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
-    const userMessage = inputMessage.trim();
+    const userText = inputMessage.trim();
     setInputMessage("");
-    
-    // Add user message to chat
-    const newUserMessage = { id: messages.length + 1, text: userMessage, sender: "user" as const };
-    setMessages((prev) => [...prev, newUserMessage]);
+
+    // Add user message locally
+    const userMsg = { id: messages.length + 1, text: userText, sender: "user" as const };
+    setMessages((prev) => [...prev, userMsg]);
 
     setIsLoading(true);
 
     try {
-      // Prepare messages for OpenAI API
-      const conversationHistory: OpenAIMessage[] = [
+      // Build conversation history for the backend
+      const conversation: ChatMessage[] = [
         { role: "system", content: "Você é um assistente virtual amigável e inteligente. Responda de forma clara e útil." },
-        ...messages.map(msg => ({
-          role: msg.sender === "user" ? "user" : "assistant" as const,
+        ...messages.map((msg) => ({
+          role: msg.sender === "user" ? "user" : "assistant",
           content: msg.text,
         })),
-        { role: "user", content: userMessage },
+        { role: "user", content: userText },
       ];
 
-      // Send to OpenAI API
-      const aiResponse = await sendMessageToOpenAI(conversationHistory);
+      const aiReply = await fetchAIReply(conversation);
 
-      // Add AI response to chat
-      const newAiMessage = { id: messages.length + 2, text: aiResponse, sender: "ai" as const };
-      setMessages((prev) => [...prev, newAiMessage]);
-    } catch (error) {
-      console.error("Error communicating with OpenAI:", error);
-      const errorMessage = { 
-        id: messages.length + 2, 
-        text: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.", 
-        sender: "ai" as const 
+      const aiMsg = { id: messages.length + 2, text: aiReply, sender: "ai" as const };
+      setMessages((prev) => [...prev, aiMsg]);
+    } catch (error: any) {
+      console.error("Chat error:", error);
+      const errMsg = {
+        id: messages.length + 2,
+        text: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.",
+        sender: "ai" as const,
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errMsg]);
     } finally {
       setIsLoading(false);
     }
@@ -84,26 +82,26 @@ const Chat = () => {
 
         {/* Message display area */}
         <div className="flex-1 overflow-y-auto space-y-4">
-          {messages.map((message) => (
+          {messages.map((msg) => (
             <div
-              key={message.id}
+              key={msg.id}
               className={`max-w-[80%] p-4 rounded-2xl shadow-sm ${
-                message.sender === "user"
+                msg.sender === "user"
                   ? "ml-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-md"
                   : "mr-auto bg-white text-gray-800 rounded-bl-md"
               }`}
             >
-              {message.text}
+              {msg.text}
             </div>
           ))}
-          
+
           {/* Loading indicator */}
           {isLoading && (
             <div className="mr-auto bg-white text-gray-800 rounded-bl-md rounded-2xl shadow-sm p-4 max-w-[80%]">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
                 <span className="ml-2 text-gray-600">Pensando...</span>
               </div>
             </div>
@@ -126,11 +124,11 @@ const Chat = () => {
           onClick={handleSendMessage}
           disabled={isLoading || !inputMessage.trim()}
           className={`bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2 font-medium ${
-            isLoading || !inputMessage.trim() ? 'opacity-50 cursor-not-allowed' : ''
+            isLoading || !inputMessage.trim() ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           <Send size={18} />
-          {isLoading ? 'Enviando...' : 'Enviar'}
+          {isLoading ? "Enviando..." : "Enviar"}
         </button>
       </div>
     </div>
