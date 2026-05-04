@@ -1,10 +1,17 @@
 "use client";
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Sparkles, Bot, ArrowRight } from 'lucide-react';
 
 const Index = () => {
+  const router = useRouter();
+
+  const handleStartExploration = () => {
+    router.push('/chat');
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 p-4">
       {/* Background decorative elements */}
@@ -59,7 +66,10 @@ const Index = () => {
           
           {/* CTA Button */}
           <div className="pt-6">
-            <button className="group relative bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <button 
+              onClick={handleStartExploration}
+              className="group relative bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
               <span className="relative z-10">Começar Exploração</span>
               <ArrowRight className="absolute right-4 top-1/2 transform -translate-y-1/2 group-hover:translate-x-1 transition-transform duration-300" size={20} />
             </button>
