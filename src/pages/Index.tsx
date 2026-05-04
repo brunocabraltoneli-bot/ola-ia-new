@@ -1,15 +1,12 @@
 "use client";
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Sparkles, Bot, ArrowRight } from 'lucide-react';
 
 const Index = () => {
-  const router = useRouter();
-
   const handleStartExploration = () => {
-    router.push('/chat');
+    window.location.href = '/chat';
   };
 
   return (
