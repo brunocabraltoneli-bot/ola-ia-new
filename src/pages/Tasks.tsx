@@ -26,7 +26,7 @@ const Tasks = () => {
   const fetchTasks = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("tasks")
+      .from("tarefas")
       .select("*")
       .order("data_criacao", { ascending: false });
 
@@ -49,7 +49,7 @@ const Tasks = () => {
 
     if (editingTask) {
       const { error } = await supabase
-        .from("tasks")
+        .from("tarefas")
         .update({ titulo: title.trim() })
         .eq("id", editingTask.id);
 
@@ -62,7 +62,7 @@ const Tasks = () => {
       }
     } else {
       const { error } = await supabase
-        .from("tasks")
+        .from("tarefas")
         .insert({
           titulo: title.trim(),
           status: "pendente",
@@ -86,7 +86,7 @@ const Tasks = () => {
   const toggleStatus = async (task: Task) => {
     const newStatus = task.status === "concluida" ? "pendente" : "concluida";
     const { error } = await supabase
-      .from("tasks")
+      .from("tarefas")
       .update({
         status: newStatus,
         data_conclusao: newStatus === "concluida" ? new Date().toISOString() : null,
@@ -105,7 +105,7 @@ const Tasks = () => {
   const deleteTask = async (id: number) => {
     if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
 
-    const { error } = await supabase.from("tasks").delete().eq("id", id);
+    const { error } = await supabase.from("tarefas").delete().eq("id", id);
 
     if (error) {
       console.error("Error deleting task:", error);
