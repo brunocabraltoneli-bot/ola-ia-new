@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Plus, Check, Calendar, Edit2, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +23,6 @@ const Tasks = () => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [title, setTitle] = useState("");
 
-  // Fetch tasks from Supabase
   const fetchTasks = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -45,13 +43,11 @@ const Tasks = () => {
     fetchTasks();
   }, []);
 
-  // Create or update task
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
 
     if (editingTask) {
-      // Update existing task
       const { error } = await supabase
         .from("tasks")
         .update({ titulo: title.trim() })
@@ -65,7 +61,6 @@ const Tasks = () => {
         fetchTasks();
       }
     } else {
-      // Create new task
       const { error } = await supabase
         .from("tasks")
         .insert({
@@ -88,7 +83,7 @@ const Tasks = () => {
     setEditingTask(null);
   };
 
-  // Toggle task status  const toggleStatus = async (task: Task) => {
+  const toggleStatus = async (task: Task) => {
     const newStatus = task.status === "concluida" ? "pendente" : "concluida";
     const { error } = await supabase
       .from("tasks")
@@ -107,7 +102,6 @@ const Tasks = () => {
     }
   };
 
-  // Delete task
   const deleteTask = async (id: number) => {
     if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
 
@@ -122,7 +116,6 @@ const Tasks = () => {
     }
   };
 
-  // Edit task
   const editTask = (task: Task) => {
     setEditingTask(task);
     setTitle(task.titulo);
@@ -134,12 +127,8 @@ const Tasks = () => {
       {/* Header */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-lg border-b border-emerald-100 z-10">
         <div className="flex items-center justify-between p-4 max-w-2xl mx-auto">
-          <button
-            onClick={goHome}
-            className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 transition-colors"
-          >
-            <ArrowLeft size={20} />
-            <span className="font-medium">Voltar</span>
+          <button onClick={goHome} className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 transition-colors">
+            <ArrowLeft size={20} /> <span className="font-medium">Voltar</span>
           </button>
           <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
             Minhas Tarefas
@@ -148,8 +137,7 @@ const Tasks = () => {
             onClick={() => setShowForm(true)}
             className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-full hover:bg-emerald-700 transition-colors"
           >
-            <Plus size={18} />
-            <span className="hidden sm:inline">Nova</span>
+            <Plus size={18} /> <span className="hidden sm:inline">Nova</span>
           </button>
         </div>
       </div>
@@ -218,60 +206,46 @@ const Tasks = () => {
             {tasks.map((task) => (
               <div
                 key={task.id}
-                className={`bg-white rounded-2xl p-4 shadow-sm border border-gray-100 ${
-                  task.status === "concluida" ? "opacity-75" : ""
-                }`}
+                className={`bg-white rounded-2xl p-4 shadow-sm border border-gray-100 ${task.status === "concluida" ? "opacity-75" : ""}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <h3
-                      className={`font-medium text-gray-800 ${
-                        task.status === "concluida" ? "line-through" : ""
-                      }`}
+                      className={`font-medium text-gray-800 ${task.status === "concluida" ? "line-through" : ""}`}
                     >
                       {task.titulo}
                     </h3>
                     <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          task.status === "concluida"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-amber-100 text-amber-700"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${task.status === "concluida" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
                       >
                         {task.status === "concluida" ? "Concluída" : "Pendente"}
                       </span>
                       <span className="text-gray-400">
-                        {new Date(task.data_criacao).toLocaleDateString(
-                          "pt-BR",
-                        )}
+                        {new Date(task.data_criacao).toLocaleDateString("pt-BR",)}
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => toggleStatus(task)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        task.status === "concluida"
-                          ? "text-emerald-600 hover:bg-emerald-50"
-                          : "text-gray-400 hover:bg-gray-100"
-                      }`}
-                    >
-                      <Check size={18} />
-                    </button>
-                    <button
-                      onClick={() => editTask(task)}
-                      className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    <button
-                      onClick={() => deleteTask(task.id)}
-                      className="p-2 rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => toggleStatus(task)}
+                    className={`p-2 rounded-lg transition-colors ${task.status === "concluida" ? "text-emerald-600 hover:bg-emerald-50" : "text-gray-400 hover:bg-gray-100"}`}
+                  >
+                    <Check size={18} />
+                  </button>
+                  <button
+                    onClick={() => editTask(task)}
+                    className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                  >
+                    <Edit2 size={18} />
+                  </button>
+                  <button
+                    onClick={() => deleteTask(task.id)}
+                    className="p-2 rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
               </div>
             ))}
