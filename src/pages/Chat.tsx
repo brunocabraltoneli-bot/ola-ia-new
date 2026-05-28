@@ -63,7 +63,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300">
+    <div className="min-h-screen relative bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 pt-20">
       {/* Back button top left */}
       <button
         onClick={goHome}
@@ -74,7 +74,7 @@ const Chat = () => {
       </button>
 
       {/* Main content */}
-      <div className="flex flex-col h-screen max-w-2xl mx-auto pt-20 pb-32 px-4">
+      <div className="flex flex-col h-screen max-w-2xl mx-auto pt-8 pb-32 px-4">
         {/* Title with gradient and hover animation */}
         <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent tracking-tight text-center mb-8 hover:scale-[1.02] transition-transform duration-300 cursor-default">
           Chat com IA
