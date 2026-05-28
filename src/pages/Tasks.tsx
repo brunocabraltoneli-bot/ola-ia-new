@@ -28,13 +28,13 @@ const Tasks = () => {
   const fetchTasks = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("tarefas")
+      .from("tasks")
       .select("*")
       .order("data_criacao", { ascending: false });
 
     if (error) {
-      showError("Erro ao carregar tarefas");
       console.error("Error fetching tasks:", error);
+      showError("Erro ao carregar tarefas");
     } else {
       setTasks(data || []);
     }
@@ -53,20 +53,21 @@ const Tasks = () => {
     if (editingTask) {
       // Update existing task
       const { error } = await supabase
-        .from("tarefas")
+        .from("tasks")
         .update({ titulo: title.trim() })
         .eq("id", editingTask.id);
 
       if (error) {
+        console.error("Error updating task:", error);
         showError("Erro ao atualizar tarefa");
       } else {
         showSuccess("Tarefa atualizada com sucesso!");
         fetchTasks();
       }
     } else {
-      // Create new task - send null for data_conclusao (timestamp field)
+      // Create new task
       const { error } = await supabase
-        .from("tarefas")
+        .from("tasks")
         .insert({
           titulo: title.trim(),
           status: "pendente",
@@ -74,6 +75,7 @@ const Tasks = () => {
         });
 
       if (error) {
+        console.error("Error inserting task:", error);
         showError("Erro ao criar tarefa");
       } else {
         showSuccess("Tarefa criada com sucesso!");
@@ -86,11 +88,10 @@ const Tasks = () => {
     setEditingTask(null);
   };
 
-  // Toggle task status
-  const toggleStatus = async (task: Task) => {
+  // Toggle task status  const toggleStatus = async (task: Task) => {
     const newStatus = task.status === "concluida" ? "pendente" : "concluida";
     const { error } = await supabase
-      .from("tarefas")
+      .from("tasks")
       .update({
         status: newStatus,
         data_conclusao: newStatus === "concluida" ? new Date().toISOString() : null,
@@ -98,11 +99,10 @@ const Tasks = () => {
       .eq("id", task.id);
 
     if (error) {
+      console.error("Error updating status:", error);
       showError("Erro ao atualizar status");
     } else {
-      showSuccess(
-        `Tarefa ${newStatus === "concluida" ? "concluída" : "reaberta"}!`,
-      );
+      showSuccess(`Tarefa ${newStatus === "concluida" ? "concluída" : "reaberta"}!`);
       fetchTasks();
     }
   };
@@ -111,9 +111,10 @@ const Tasks = () => {
   const deleteTask = async (id: number) => {
     if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
 
-    const { error } = await supabase.from("tarefas").delete().eq("id", id);
+    const { error } = await supabase.from("tasks").delete().eq("id", id);
 
     if (error) {
+      console.error("Error deleting task:", error);
       showError("Erro ao excluir tarefa");
     } else {
       showSuccess("Tarefa excluída com sucesso!");
