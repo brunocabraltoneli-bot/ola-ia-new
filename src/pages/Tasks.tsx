@@ -64,13 +64,13 @@ const Tasks = () => {
         fetchTasks();
       }
     } else {
-      // Create new task with explicit null for data_conclusao
+      // Create new task - send null for data_conclusao (timestamp field)
       const { error } = await supabase
         .from("tarefas")
         .insert({
           titulo: title.trim(),
           status: "pendente",
-          data_conclusao: null, // ensure correct timestamp type
+          data_conclusao: null,
         });
 
       if (error) {
@@ -93,8 +93,7 @@ const Tasks = () => {
       .from("tarefas")
       .update({
         status: newStatus,
-        data_conclusao:
-          newStatus === "concluida" ? new Date().toISOString() : null,
+        data_conclusao: newStatus === "concluida" ? new Date().toISOString() : null,
       })
       .eq("id", task.id);
 
