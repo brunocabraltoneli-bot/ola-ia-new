@@ -76,8 +76,8 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* Main content card */}
-      <div className="max-w-2xl mx-auto px-4 pb-32">
+      {/* Main content card with margin */}
+      <div className="max-w-2xl mx-auto px-4 pb-32 mt-8"> {/* Added mt-8 */}
         <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
           {/* Message display area */}
           <div className="flex-1 overflow-y-auto space-y-4 max-h-[calc(100vh-200px)]">
