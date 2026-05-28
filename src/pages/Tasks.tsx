@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Plus, Check, X, Calendar, Edit2, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Check, Calendar, Edit2, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { showSuccess, showError } from "@/utils/toast";
 
@@ -64,10 +64,14 @@ const Tasks = () => {
         fetchTasks();
       }
     } else {
-      // Create new task
+      // Create new task with explicit null for data_conclusao
       const { error } = await supabase
         .from("tarefas")
-        .insert({ titulo: title.trim(), status: "pendente" });
+        .insert({
+          titulo: title.trim(),
+          status: "pendente",
+          data_conclusao: null, // ensure correct timestamp type
+        });
 
       if (error) {
         showError("Erro ao criar tarefa");
@@ -87,16 +91,19 @@ const Tasks = () => {
     const newStatus = task.status === "concluida" ? "pendente" : "concluida";
     const { error } = await supabase
       .from("tarefas")
-      .update({ 
+      .update({
         status: newStatus,
-        data_conclusao: newStatus === "concluida" ? new Date().toISOString() : null
+        data_conclusao:
+          newStatus === "concluida" ? new Date().toISOString() : null,
       })
       .eq("id", task.id);
 
     if (error) {
       showError("Erro ao atualizar status");
     } else {
-      showSuccess(`Tarefa ${newStatus === "concluida" ? "concluída" : "reaberta"}!`);
+      showSuccess(
+        `Tarefa ${newStatus === "concluida" ? "concluída" : "reaberta"}!`,
+      );
       fetchTasks();
     }
   };
@@ -105,10 +112,7 @@ const Tasks = () => {
   const deleteTask = async (id: number) => {
     if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
 
-    const { error } = await supabase
-      .from("tarefas")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("tarefas").delete().eq("id", id);
 
     if (error) {
       showError("Erro ao excluir tarefa");
@@ -220,9 +224,11 @@ const Tasks = () => {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
-                    <h3 className={`font-medium text-gray-800 ${
-                      task.status === "concluida" ? "line-through" : ""
-                    }`}>
+                    <h3
+                      className={`font-medium text-gray-800 ${
+                        task.status === "concluida" ? "line-through" : ""
+                      }`}
+                    >
                       {task.titulo}
                     </h3>
                     <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
@@ -236,7 +242,9 @@ const Tasks = () => {
                         {task.status === "concluida" ? "Concluída" : "Pendente"}
                       </span>
                       <span className="text-gray-400">
-                        {new Date(task.data_criacao).toLocaleDateString("pt-BR")}
+                        {new Date(task.data_criacao).toLocaleDateString(
+                          "pt-BR",
+                        )}
                       </span>
                     </div>
                   </div>
