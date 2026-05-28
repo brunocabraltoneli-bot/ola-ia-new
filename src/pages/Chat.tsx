@@ -63,49 +63,49 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 pt-20">
-      {/* Back button top left */}
-      <button
-        onClick={goHome}
-        className="absolute top-6 left-6 group flex items-center gap-2 bg-white text-gray-800 px-4 py-2 rounded-full hover:bg-gray-50 transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg z-20"
-      >
-        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
-        Voltar ao início
-      </button>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 pt-16">
+      {/* Header */}
+      <div className="max-w-2xl mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <button onClick={goHome} className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors">
+            <ArrowLeft size={20} /> <span className="font-medium">Voltar</span>
+          </button>
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+            Chat com IA
+          </h1>
+        </div>
+      </div>
 
-      {/* Main content */}
-      <div className="flex flex-col h-screen max-w-2xl mx-auto pt-8 pb-32 px-4">
-        {/* Title with gradient and hover animation */}
-        <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent tracking-tight text-center mb-8 hover:scale-[1.02] transition-transform duration-300 cursor-default">
-          Chat com IA
-        </h1>
-
-        {/* Message display area */}
-        <div className="flex-1 overflow-y-auto space-y-4">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`max-w-[80%] p-4 rounded-2xl shadow-sm ${
-                msg.sender === "user"
-                  ? "ml-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-md"
-                  : "mr-auto bg-white text-gray-800 rounded-bl-md"
-              }`}
-            >
-              {msg.text}
-            </div>
-          ))}
-
-          {/* Loading indicator */}
-          {isLoading && (
-            <div className="mr-auto bg-white text-gray-800 rounded-bl-md rounded-2xl shadow-sm p-4 max-w-[80%]">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                <span className="ml-2 text-gray-600">Pensando...</span>
+      {/* Main content card */}
+      <div className="max-w-2xl mx-auto px-4 pb-32">
+        <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
+          {/* Message display area */}
+          <div className="flex-1 overflow-y-auto space-y-4 max-h-[calc(100vh-200px)]">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`max-w-[80%] p-4 rounded-2xl shadow-sm ${
+                  msg.sender === "user"
+                    ? "ml-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-md"
+                    : "mr-auto bg-white text-gray-800 rounded-bl-md border border-purple-200"
+                }`}
+              >
+                {msg.text}
               </div>
-            </div>
-          )}
+            ))}
+
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="mr-auto bg-white text-gray-800 rounded-bl-md rounded-2xl shadow-sm p-4 max-w-[80%] border border-purple-200">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                  <span className="ml-2 text-gray-600">Pensando...</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
