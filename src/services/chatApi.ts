@@ -7,8 +7,7 @@ export interface ChatMessage {
  * Sends the conversation history to the backend API and returns the AI reply.
  */
 export async function fetchAIReply(messages: ChatMessage[]): Promise<string> {
-  const response = await fetch("/api/chat", {
-    method: "POST",
+  const response = await fetch("http://localhost:3000/api/chat", {
     headers: {
       "Content-Type": "application/json",
     },
