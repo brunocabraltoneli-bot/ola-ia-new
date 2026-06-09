@@ -31,11 +31,19 @@ const Login = () => {
     setLoading(true);
 
     try {
+      console.log('[Login] Tentando autenticar com Supabase', {
+        mode: isLogin ? 'login' : 'cadastro',
+        email: email.trim(),
+      });
+
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password: password.trim(),
         });
+
+        console.log('[Login] Resultado do login', { data, error });
+
         if (error) {
           showError(error.message);
         } else {
@@ -43,10 +51,13 @@ const Login = () => {
           navigate("/");
         }
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password: password.trim(),
         });
+
+        console.log('[Login] Resultado do cadastro', { data, error });
+
         if (error) {
           showError(error.message);
         } else {
