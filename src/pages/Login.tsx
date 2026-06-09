@@ -5,6 +5,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const Login = () => {
   const { user, loading, signOut } = useAuthContext();
