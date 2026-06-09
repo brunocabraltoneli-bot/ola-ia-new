@@ -1,10 +1,11 @@
+Tasks">
 'use client';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import NotFound from './pages/NotFound';
 import Chat from './pages/Chat';
-import Tasks from './pages/Taces';
+import Tasks from './pages/Tasks';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import PrivateRoute from '@/components/PrivateRoute';
