@@ -1,19 +1,27 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Chat from "./pages/Chat";
-import Tasks from "./pages/Tasks";
-import Navbar from "./components/Navbar";
+'use client';
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Index from './pages/Index';
+import NotFound from './pages/NotFound';
+import Chat from './pages/Chat';
+import Tasks from './pages/Tasks';
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import PrivateRoute from '@/components/PrivateRoute';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 const App = () => (
   <BrowserRouter>
     <Navbar />
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/chat" element={<Chat />} />
-      <Route path="/tasks" element={<Tasks />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
+        <Route path="/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AuthProvider>
   </BrowserRouter>
 );
 
