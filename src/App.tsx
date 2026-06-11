@@ -1,13 +1,3 @@
-... code ... ＜/dyad-write>
-
-＜dyad-chat-summary>App.tsx updated to protect all routes with PrivateRoute and force login＜/dyad-chat-summary>
-
-Also maybe include ＜dyad-command type="restart"> to reload.
-
-But the user didn't request restart; but it's okay to include. However we must not add extra commands beyond needed? The guidelines say we can suggest restart if needed. It's fine.
-
-Let's produce final answer.
-</think><dyad-write path="src/App.tsx" description="Replace App.tsx with code that blocks all routes until the user logs in">
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Home from './pages/Home';
