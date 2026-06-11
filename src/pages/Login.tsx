@@ -21,8 +21,8 @@ const Login = () => {
         password,
       });
       if (error) throw error;
-      // auth context will update via onAuthStateChange listener
-      navigate("/", { replace: true });
+      // Redirect to /home after successful login
+      navigate("/home", { replace: true });
     } catch (err: any) {
       alert(err.message ?? "Login failed");
     } finally {
