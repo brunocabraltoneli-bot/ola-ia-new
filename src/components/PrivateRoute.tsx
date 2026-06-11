@@ -3,7 +3,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/AuthContext';
 
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+export function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthContext();
   const location = useLocation();
 
@@ -20,6 +20,4 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   return children;
-};
-
-export default PrivateRoute;
+}
