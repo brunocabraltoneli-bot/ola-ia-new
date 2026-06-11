@@ -21,3 +21,6 @@ export function PrivateRoute({ children }: { children: React.ReactNode }) {
 
   return children;
 }
+
+// Adicionar exportação padrão (default)
+export default PrivateRoute;

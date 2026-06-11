@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { PrivateRoute } from "@/components/PrivateRoute";
+import PrivateRoute from "@/components/PrivateRoute"; // Importação padrão
 import Home from "./Home";
 
 const Index = () => {
