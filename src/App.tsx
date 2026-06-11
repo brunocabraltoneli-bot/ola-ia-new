@@ -4,6 +4,7 @@ import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import Tasks from "./pages/Tasks";
 import { useAuthContext } from "./contexts/AuthContext";
+import Layout from "./components/Layout";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthContext();
@@ -19,7 +20,8 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     console.log("PrivateRoute - No user, redirecting to /entrar");
     return <Navigate to="/entrar" replace />;
   }
-  return <>{children}</>;
+  // Render children inside the shared layout
+  return <Layout>{children}</Layout>;
 }
 
 export default function App() {
@@ -30,11 +32,32 @@ export default function App() {
       <Routes>
         {/* Public route */}
         <Route path="/entrar" element={<Login />} />
-        {/* Protected routes (wrapped by PrivateRoute) */}
-        <Route path="/home" element={<PrivateRoute><Index /></PrivateRoute>} />
-        <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
-        <Route path="/tarefas" element={<PrivateRoute><Tasks /></PrivateRoute>} />
-        {/* Security fallback */}
+        {/* Protected routes (wrapped by PrivateRoute with Layout) */}
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Index />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <PrivateRoute>
+              <Chat />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/tarefas"
+          element={
+            <PrivateRoute>
+              <Tasks />
+            </PrivateRoute>
+          }
+        />
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/entrar" replace />} />
       </Routes>
     </BrowserRouter>
