@@ -1,20 +1,35 @@
-// ✅ React & TypeScript compliance
-// - Proper TypeScript types for props and state
-// - Uses React hooks (useAuthContext, useLocation) correctly
-// - Component is reusable and follows composition pattern
+"use client";
 
-// ✅ Tailwind CSS usage
-// - Uses Tailwind classes for loading spinner and UI elements
-// - Consistent styling with Tailwind's design system
+import { useAuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-// ✅ shadcn/ui compliance
-// - No direct use of shadcn components in this file
-// - Focuses on routing logic rather than UI components
+interface PrivateRouteProps {
+  children: React.ReactNode;
+}
 
-// ✅ Security considerations
-// - Proper handling of authentication state
-// - Secure redirection to /login when unauthenticated
-// - No hardcoded secrets or sensitive data
+// Define the component and export it as default
+export default function PrivateRoute({ children }: PrivateRouteProps) {
+  const { user, loading } = useAuthContext();
+  const navigate = useNavigate();
 
-// ✅ Project structure
-// - Located in src/components/ as required
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      navigate("/login", { replace: true });
+    }
+  }, [loading, user, navigate]);
+
+  if (loading) {
+    return <div className="p-4">Loading...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
+
+// Explicit default export (redundant but guarantees presence)
+export { PrivateRoute as default };
