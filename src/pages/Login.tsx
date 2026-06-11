@@ -33,10 +33,10 @@ const Login = () => {
 
   const handleSignupClick = async (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log("Botão clicado");
     setErrorMessage("");
     setLoading(true);
     try {
+      // Only use signUp - no anonymous sign-in attempts
       const { error } = await supabase.auth.signUp({
         email,
         password,
