@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/Tasks";
 import Navbar from "./components/Navbar";
-import { PrivateRoute } from "./components/PrivateRoute";
+import PrivateRoute from "../components/PrivateRoute";
 
 export default function App() {
   return (
