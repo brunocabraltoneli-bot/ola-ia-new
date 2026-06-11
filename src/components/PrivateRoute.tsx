@@ -8,7 +8,6 @@ interface PrivateRouteProps {
   children: React.ReactNode;
 }
 
-// Define the component and export it as default
 export default function PrivateRoute({ children }: PrivateRouteProps) {
   const { user, loading } = useAuthContext();
   const navigate = useNavigate();
@@ -30,6 +29,3 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
 
   return <>{children}</>;
 }
-
-// Explicit default export (redundant but guarantees presence)
-export { PrivateRoute as default };
