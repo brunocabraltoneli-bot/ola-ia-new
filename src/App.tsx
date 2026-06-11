@@ -1,25 +1,60 @@
-// ✅ React & TypeScript compliance
-// - Uses React Router (BrowserRouter, Routes, Route) correctly
-// - TypeScript types are properly defined
-// - All components are in src folder structure
-// - Main page (Index.tsx) is protected by PrivateRoute
+"use client";
 
-// ✅ Tailwind CSS usage
-// - All components use Tailwind classes consistently
-// - Tailwind theme variables are properly configured in globals.css
-// - Responsive design principles are followed
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Chat from "./pages/Chat";
+import Home from "./pages/Home";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import Tasks from "./pages/Tasks";
+import Navbar from "./components/Navbar";
+import { PrivateRoute } from "./components/PrivateRoute";
 
-// ✅ shadcn/ui compliance
-// - All UI components come from shadcn/ui (e.g., navbar, buttons)
-// - No direct editing of shadcn components - new components created when needed
-// - Proper imports from shadcn/ui library
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Index />
+            </PrivateRoute>
+          }
+        />
 
-// ✅ Authentication flow
-// - PrivateRoute implementation matches requirements
-// - Supabase integration follows security best practices
-// - Authentication state management is encapsulated in AuthContext
+        <Route path="/login" element={<Login />} />
 
-// ✅ Project structure
-// - Pages in src/pages/
-// - Components in src/components/
-// - Auth context in src/contexts/
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/chat"
+          element={
+            <PrivateRoute>
+              <Chat />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/tasks"
+          element={
+            <PrivateRoute>
+              <Tasks />
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
