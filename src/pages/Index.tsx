@@ -1,1 +1,32 @@
-"use client"; import React from 'react'; import { useAuthContext } from "@/contexts/AuthContext"; import { PrivateRoute } from "@/components/PrivateRoute"; const Index = () => { const { user, loading } = useAuthContext(); if (loading) { return ( <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50"> <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div> </div> ); } if (!user) { return <Navigate to="/login" replace />; } return <Navigate to="/home" replace />; }; export default Index;
+"use client";
+import React from "react";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { PrivateRoute } from "@/components/PrivateRoute";
+import Home from "./Home";
+
+const Index = () => {
+  const { user, loading } = useAuthContext();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <PrivateRoute>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+            Dashboard
+          </h1>
+          <p className="text-lg text-gray-600">Seja bem-vindo ao seu painel!</p>
+        </div>
+      </div>
+    </PrivateRoute>
+  );
+};
+
+export default Index;
