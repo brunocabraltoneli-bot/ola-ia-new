@@ -66,14 +66,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-<dyad-write path="src/main.tsx" description="Wrap the app with AuthProvider">
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./globals.css";
-import { AuthProvider } from "./contexts/AuthContext";
-
-createRoot(document.getElementById("root")!).render(
-  <AuthProvider>
-    <App />
-  </AuthProvider>
-);
