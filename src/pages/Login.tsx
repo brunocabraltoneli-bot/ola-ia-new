@@ -1,7 +1,7 @@
 "use client";
 
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../contexts/AuthContext";
+import { useAuthContext } from "../../src/contexts/AuthContext";
 import { supabase } from "../integrations/supabase/client";
 import { useState } from "react";
 
