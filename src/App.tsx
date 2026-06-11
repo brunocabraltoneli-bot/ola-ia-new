@@ -8,6 +8,8 @@ import { useAuthContext } from './contexts/AuthContext';
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthContext();
 
+  console.log('PrivateRoute - user:', user, 'loading:', loading);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
@@ -16,7 +18,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  // Rigorous check: if user is null, force redirect to login
+  if (user === null) {
+    console.log('PrivateRoute - No user found, redirecting to /login');
     return <Navigate to="/login" replace />;
   }
 
@@ -24,6 +28,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const { user, loading } = useAuthContext();
+  console.log('App - user:', user, 'loading:', loading);
+
   return (
     <BrowserRouter>
       <Routes>
