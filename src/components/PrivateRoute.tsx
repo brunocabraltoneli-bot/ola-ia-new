@@ -1,7 +1,7 @@
 'use client';
 
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthContext } from '../contexts/AuthContext';
 
 export function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthContext();

@@ -1,9 +1,8 @@
 "use client";
 
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { signInWithEmailAndPassword } from "firebase/auth"; // placeholder, we'll use supabase
-import { supabase } from "@/integrations/supabase/client";
+import { useAuthContext } from "../contexts/AuthContext";
+import { supabase } from "../integrations/supabase/client";
 import { useState } from "react";
 
 const Login = () => {

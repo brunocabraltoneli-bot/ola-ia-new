@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ArrowLeft, Send } from "lucide-react";
-import { fetchAIReply, type ChatMessage } from "@/services/chatApi";
+import { fetchAIReply, type ChatMessage } from "../services/chatApi";
 
 const Chat = () => {
   const goHome = () => {
@@ -77,7 +77,7 @@ const Chat = () => {
       </div>
 
       {/* Main content card with margin */}
-      <div className="max-w-2xl mx-auto px-4 pb-32 mt-8"> {/* Added mt-8 */}
+      <div className="max-w-2xl mx-auto px-4 pb-32 mt-8">
         <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
           {/* Message display area */}
           <div className="flex-1 overflow-y-auto space-y-4 max-h-[calc(100vh-200px)]">

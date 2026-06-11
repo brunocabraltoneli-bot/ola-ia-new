@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { MadeWithDyad } from "@/components/made-with-dyad";
+import { MadeWithDyad } from "../components/made-with-dyad";
 import { Sparkles, Bot, ArrowRight } from 'lucide-react';
 
 const Index = () => {

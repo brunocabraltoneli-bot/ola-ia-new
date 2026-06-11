@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Plus, Check, Calendar, Edit2, Trash2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { showSuccess, showError } from "@/utils/toast";
+import { supabase } from "../integrations/supabase/client";
+import { showSuccess, showError } from "../utils/toast";
 
 interface Task {
   id: number;
