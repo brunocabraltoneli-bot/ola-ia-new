@@ -10,11 +10,25 @@ import PrivateRoute from "./components/PrivateRoute";
 import { useAuthContext } from "./contexts/AuthContext";
 import AuthRedirector from "./components/AuthRedirector";
 
+const ProtectedHome = () => {
+  const { user } = useAuthContext();
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return (
+    <Layout>
+      <Index />
+    </Layout>
+  );
+};
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout><Index /></Layout>} />
+        <Route path="/" element={<ProtectedHome />} />
         <Route path="/home" element={<Layout><PrivateRoute><Index /></PrivateRoute></Layout>} />
         <Route path="/chat" element={<Layout><Chat /></Layout>} />
         <Route path="/tarefas" element={<Layout><Tasks /></Layout>} />
