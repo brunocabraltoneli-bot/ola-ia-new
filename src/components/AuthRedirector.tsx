@@ -10,12 +10,12 @@ export default function AuthRedirector({ children }: AuthRedirectorProps) {
   const { user } = useAuthContext();
   const navigate = useNavigate();
 
-  // Verifica imediatamente se o usuário está autenticado
+  // Se não estiver autenticado, redireciona para login
   if (!user) {
     navigate("/login", { replace: true });
-    return null; // Evita renderizar qualquer conteúdo
+    return null;
   }
 
-  // Usuário está autenticado – renderiza os filhos protegidos
+  // Se estiver autenticado, renderiza os filhos
   return <>{children}</>;
 }
