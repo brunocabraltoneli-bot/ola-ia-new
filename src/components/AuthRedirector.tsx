@@ -7,20 +7,15 @@ interface AuthRedirectorProps {
 }
 
 export default function AuthRedirector({ children }: AuthRedirectorProps) {
-  const { user, checked } = useAuthContext();
+  const { user } = useAuthContext();
   const navigate = useNavigate();
 
-  // Wait for auth check to complete
-  if (!checked) {
-    return <div className="p-4">Loading...</div>;
-  }
-
-  // If not authenticated, redirect to login page
+  // Immediately check if user is authenticated
   if (!user) {
     navigate("/login", { replace: true });
-    return null;
+    return null; // Prevent rendering any content
   }
 
-  // User is authenticated – render the protected children
+  // User is authenticated – render protected children
   return <>{children}</>;
 }

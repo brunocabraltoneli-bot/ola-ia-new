@@ -25,14 +25,12 @@ export const useAuthContext = () => {
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
 
   // Check for existing session on mount
   useEffect(() => {
     const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-      setLoading(false);
     };
 
     getSession();
@@ -56,10 +54,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (error) throw error;
     setUser(null);
   };
-
-  if (loading) {
-    return <div className="p-4">Loading...</div>;
-  }
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
