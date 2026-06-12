@@ -4,7 +4,7 @@ import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import Tasks from "./pages/Tasks";
 import Layout from "./components/Layout";
-import AuthRedirector from "./components/AuthRedirector";
+import PrivateRoute from "./components/PrivateRoute";
 
 export default function App() {
   return (
@@ -13,8 +13,8 @@ export default function App() {
         {/* Public login route */}
         <Route path="/entrar" element={<Login />} />
 
-        {/* Protected routes wrapped in AuthRedirector */}
-        <Route path="/" element={<AuthRedirector><Layout /></AuthRedirector>}>
+        {/* Protected routes wrapped in PrivateRoute */}
+        <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
           <Route path="/home" element={<Index />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/tarefas" element={<Tasks />} />
