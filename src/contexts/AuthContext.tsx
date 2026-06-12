@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { supabase } from "../integrations/supabase/client";
 
 interface User {
@@ -26,13 +26,8 @@ export const useAuthContext = () => {
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Do NOT restore any session automatically – keep the app "empty" until the user
-  // explicitly logs in or signs up.
-  // The login / signup flows in the Login component will call `login()` /
-  // `signUp()` from this context.
+  const [user] = useState<User | null>(null);
+  const [loading] = useState<boolean>(false);
 
   const login = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
