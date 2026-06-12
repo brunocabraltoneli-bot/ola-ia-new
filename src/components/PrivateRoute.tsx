@@ -1,29 +1,29 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
 }
 
 export default function PrivateRoute({ children }: PrivateRouteProps) {
-  const { user, loading } = useAuthContext();
+  const { user } = useAuthContext();
   const navigate = useNavigate();
+  const [isMounted, setIsMounted] = useState(false);
 
+  // Wait for the component to mount before checking authentication
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      navigate("/login", { replace: true });
-    }
-  }, [loading, user, navigate]);
+    setIsMounted(true);
+  }, []);
 
-  if (loading) {
+  if (!isMounted) {
     return <div className="p-4">Loading...</div>;
   }
 
+  // Redirect to login only if not authenticated
   if (!user) {
+    navigate("/login", { replace: true });
     return null;
   }
 
