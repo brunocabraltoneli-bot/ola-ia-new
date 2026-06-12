@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -8,16 +7,11 @@ interface AuthRedirectorProps {
 }
 
 export default function AuthRedirector({ children }: AuthRedirectorProps) {
-  const { user } = useAuthContext();
+  const { user, checked } = useAuthContext();
   const navigate = useNavigate();
-  const [mounted, setMounted] = useState(false);
 
-  // Wait for component to mount before checking auth
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  // Wait for auth check to complete
+  if (!checked) {
     return <div className="p-4">Loading...</div>;
   }
 
