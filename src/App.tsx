@@ -1,1 +1,22 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; import Login from "./pages/Login"; import Index from "./pages/Index"; import Chat from "./pages/Chat"; import Tasks from "./pages/Tasks"; import Layout from "./components/Layout"; import PrivateRoute from "./components/PrivateRoute"; export default function App() { return ( <BrowserRouter> <Routes> {/* Public login route */} <Route path="/entrar" element={<Login />} /> {/* Protected routes wrapped in PrivateRoute */} <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}> <Route path="/home" element={<Index />} /> <Route path="/chat" element={<Chat />} /> <Route path="/tarefas" element={<Tasks />} /> {/* Fallback for any unmatched URL */} <Route path="*" element={<Navigate to="/login" replace />} /> </Routes> </BrowserRouter> ); }
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Index from "./pages/Index";
+import Chat from "./pages/Chat";
+import Tasks from "./pages/Tasks";
+import Layout from "./components/Layout";
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout><Index /></Layout>} />
+        <Route path="/home" element={<Layout><Index /></Layout>} />
+        <Route path="/chat" element={<Layout><Chat /></Layout>} />
+        <Route path="/tarefas" element={<Layout><Tasks /></Layout>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/entrar" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
