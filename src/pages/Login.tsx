@@ -42,9 +42,13 @@ const Login = () => {
     setLoading(true);
     setErrorMessage("");
 
+    // ALTERAÇÃO AQUI: Adicionamos o campo de e-mail e password explicitamente
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/home`,
+      },
     });
 
     if (error) {
@@ -53,7 +57,8 @@ const Login = () => {
       return;
     }
 
-    navigate("/home", { replace: true });
+    // Se não houver erro, informamos ao usuário ou navegamos
+    alert("Conta criada com sucesso! Você já pode entrar.");
     setLoading(false);
   };
 
