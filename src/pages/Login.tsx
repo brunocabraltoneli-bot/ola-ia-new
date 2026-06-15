@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../integrations/supabase/client";
 
 const Login = () => {
-  // Clear any persisted auth data when the login page loads
-  useEffect(() => {
+  // Clear any persisted auth data when the login page loads  useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
   }, []);
@@ -42,14 +41,7 @@ const Login = () => {
     setLoading(true);
     setErrorMessage("");
 
-    // ALTERAÇÃO AQUI: Adicionamos o campo de e-mail e password explicitamente
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/home`,
-      },
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
       setErrorMessage(error.message);
@@ -57,8 +49,7 @@ const Login = () => {
       return;
     }
 
-    // Se não houver erro, informamos ao usuário ou navegamos
-    alert("Conta criada com sucesso! Você já pode entrar.");
+    navigate("/home", { replace: true });
     setLoading(false);
   };
 
@@ -84,8 +75,7 @@ const Login = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
