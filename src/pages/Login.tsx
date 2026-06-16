@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Página de login que força autenticação com e-mail e senha.
+ * Página de login que força autenticação com e‑mail e senha.
  */
 const Login = () => {
-  // Clear any persisted auth data when the login page loads
+  // Limpa qualquer dado de autenticação persistido ao abrir a página
   useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
@@ -20,6 +20,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  /** Login tradicional com e‑mail e senha */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -31,9 +32,7 @@ const Login = () => {
     });
 
     if (error) {
-      // Log detailed error for debugging
-      console.error("Sign-in error:", error);
-      setErrorMessage(error.message || "Falha ao fazer login");
+      setErrorMessage(error.message);
       setLoading(false);
       return;
     }
@@ -42,17 +41,39 @@ const Login = () => {
     setLoading(false);
   };
 
+  /** Cadastro de novo usuário */
   const handleSignupClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage("");
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    // Primeiro cria a conta
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-    if (error) {
-      // Log detailed error for debugging
-      console.error("Sign-up error:", error);
-      setErrorMessage(error.message || "Falha ao criar conta");
+    if (signUpError) {
+      // Caso o Supabase retorne o erro de login anônimo, mostre mensagem clara
+      if (signUpError.message.includes("Anonymous sign‑ins are disabled")) {
+        setErrorMessage(
+          "O cadastro por e‑mail está desabilitado no seu projeto Supabase. Verifique as configurações de Auth.",
+        );
+      } else {
+        setErrorMessage(signUpError.message);
+      }
+      setLoading(false);
+      return;
+    }
+
+    // Após criar a conta, faz login imediato
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      setErrorMessage(signInError.message);
       setLoading(false);
       return;
     }
@@ -116,7 +137,7 @@ const Login = () => {
               onClick={handleSignupClick}
               className="text-purple-600 hover:underline bg-transparent p-0"
             >
-              Cadastre-se
+              Cadastre‑se
             </button>
           </p>
         </form>
