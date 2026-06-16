@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { ArrowLeft } from "lucide-react";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -32,6 +33,18 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 p-4">
       <div className="w-full max-w-md space-y-6 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8">
+        {/* Back button */}
+        <div className="flex justify-start">
+          <button
+            type="button"
+            onClick={() => navigate("/entrar")}
+            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-medium">Voltar</span>
+          </button>
+        </div>
+
         <h2 className="text-2xl font-bold text-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
           Cadastro
         </h2>
