@@ -1,17 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import Register from "./Register";
 
-const Login = () => {
-  // Limpa qualquer dado de autenticação persistido ao abrir a página
-  useEffect(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-  }, []);
-
+const Register = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,18 +16,16 @@ const Login = () => {
     setLoading(true);
     setErrorMessage("");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(error.message || "Falha ao criar conta");
       setLoading(false);
       return;
     }
 
-    navigate("/home", { replace: true });
+    // Redirecionar para login após cadastro bem-sucedido
+    navigate("/entrar", { replace: true });
     setLoading(false);
   };
 
@@ -42,7 +33,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 p-4">
       <div className="w-full max-w-md space-y-6 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8">
         <h2 className="text-2xl font-bold text-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-          Login
+          Cadastro
         </h2>
 
         {errorMessage && (
@@ -83,23 +74,12 @@ const Login = () => {
             disabled={loading}
             className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-md hover:from-purple-700 hover:to-indigo-700 transition-colors disabled:opacity-50"
           >
-            {loading ? "Processando..." : "Entrar"}
+            {loading ? "Criando conta..." : "Cadastrar"}
           </button>
-
-          <p className="text-center text-sm text-gray-500">
-            Não tem conta?{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/registrar", { replace: true })}
-              className="text-purple-600 hover:underline bg-transparent p-0"
-            >
-              Cadastre-se
-            </button>
-          </p>
         </form>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;
