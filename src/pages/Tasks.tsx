@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Plus, Check, Calendar, Edit2, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Check, Calendar, Edit2, Trash2, AlertCircle } from "lucide-react";
 import { supabase } from "../integrations/supabase/client";
 import { showSuccess, showError } from "../utils/toast";
+import { useAuthContext } from "../contexts/AuthContext";
 
 interface Task {
   id: number;
@@ -10,9 +11,11 @@ interface Task {
   data_criacao: string;
   status: string;
   data_conclusao: string | null;
+  user_id: string;
 }
 
 const Tasks = () => {
+  const { user, loading: authLoading } = useAuthContext();
   const goHome = () => {
     window.location.href = "/";
   };
@@ -24,10 +27,16 @@ const Tasks = () => {
   const [title, setTitle] = useState("");
 
   const fetchTasks = async () => {
+    if (!user) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const { data, error } = await supabase
       .from("tarefas")
       .select("*")
+      .eq("user_id", user.id)
       .order("data_criacao", { ascending: false });
 
     if (error) {
@@ -40,22 +49,34 @@ const Tasks = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (!authLoading) {
+      fetchTasks();
+    }
+  }, [user, authLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    
+    if (!title.trim()) {
+      showError("Digite um título para a tarefa");
+      return;
+    }
+
+    if (!user) {
+      showError("Usuário não autenticado. Faça login novamente.");
+      return;
+    }
 
     if (editingTask) {
       const { error } = await supabase
         .from("tarefas")
         .update({ titulo: title.trim() })
-        .eq("id", editingTask.id);
+        .eq("id", editingTask.id)
+        .eq("user_id", user.id);
 
       if (error) {
         console.error("Error updating task:", error);
-        showError("Erro ao atualizar tarefa");
+        showError(`Erro ao atualizar: ${error.message}`);
       } else {
         showSuccess("Tarefa atualizada com sucesso!");
         fetchTasks();
@@ -67,11 +88,12 @@ const Tasks = () => {
           titulo: title.trim(),
           status: "pendente",
           data_conclusao: null,
+          user_id: user.id,
         });
 
       if (error) {
         console.error("Error inserting task:", error);
-        showError("Erro ao criar tarefa");
+        showError(`Erro ao criar: ${error.message}`);
       } else {
         showSuccess("Tarefa criada com sucesso!");
         fetchTasks();
@@ -84,6 +106,7 @@ const Tasks = () => {
   };
 
   const toggleStatus = async (task: Task) => {
+    if (!user) return;
     const newStatus = task.status === "concluida" ? "pendente" : "concluida";
     const { error } = await supabase
       .from("tarefas")
@@ -91,11 +114,12 @@ const Tasks = () => {
         status: newStatus,
         data_conclusao: newStatus === "concluida" ? new Date().toISOString() : null,
       })
-      .eq("id", task.id);
+      .eq("id", task.id)
+      .eq("user_id", user.id);
 
     if (error) {
       console.error("Error updating status:", error);
-      showError("Erro ao atualizar status");
+      showError(`Erro ao atualizar: ${error.message}`);
     } else {
       showSuccess(`Tarefa ${newStatus === "concluida" ? "concluída" : "reaberta"}!`);
       fetchTasks();
@@ -103,13 +127,18 @@ const Tasks = () => {
   };
 
   const deleteTask = async (id: number) => {
+    if (!user) return;
     if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
 
-    const { error } = await supabase.from("tarefas").delete().eq("id", id);
+    const { error } = await supabase
+      .from("tarefas")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) {
       console.error("Error deleting task:", error);
-      showError("Erro ao excluir tarefa");
+      showError(`Erro ao excluir: ${error.message}`);
     } else {
       showSuccess("Tarefa excluída com sucesso!");
       fetchTasks();
@@ -122,9 +151,29 @@ const Tasks = () => {
     setShowForm(true);
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 pt-16 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 pt-16 flex items-center justify-center">
+        <div className="text-center p-8 bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg">
+          <AlertCircle className="text-purple-600 mx-auto mb-4" size={48} />
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Não autenticado</h2>
+          <p className="text-gray-600 mb-4">Faça login para acessar suas tarefas</p>
+          <button onClick={goHome} className="text-purple-600 hover:underline">Voltar ao início</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 pt-16">
-      {/* Simple header without redundant bar */}
       <div className="max-w-2xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <button onClick={goHome} className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors">
@@ -142,7 +191,6 @@ const Tasks = () => {
         </div>
       </div>
 
-      {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-20">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md">
@@ -182,7 +230,6 @@ const Tasks = () => {
         </div>
       )}
 
-      {/* Tasks List */}
       <div className="p-4 max-w-2xl mx-auto">
         {loading ? (
           <div className="flex justify-center py-12">
@@ -222,7 +269,7 @@ const Tasks = () => {
                         {task.status === "concluida" ? "Concluída" : "Pendente"}
                       </span>
                       <span className="text-gray-400">
-                        {new Date(task.data_criacao).toLocaleDateString("pt-BR",)}
+                        {new Date(task.data_criacao).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                   </div>
