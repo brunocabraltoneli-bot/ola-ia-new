@@ -1,14 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import type { ReactNode } from "react";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import Tasks from "./pages/Tasks";
 import { useAuthContext } from "./contexts/AuthContext";
 import Layout from "./components/Layout";
 
-function PrivateRoute({ children }: { children: React.ReactNode }) {
+function PrivateRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuthContext();
-  console.log("PrivateRoute - user:", user, "loading:", loading);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
@@ -16,23 +18,21 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
+
   if (user === null) {
-    console.log("PrivateRoute - No user, redirecting to /entrar");
     return <Navigate to="/entrar" replace />;
   }
-  // Render children inside the shared layout
+
   return <Layout>{children}</Layout>;
 }
 
 export default function App() {
-  const { user, loading } = useAuthContext();
-  console.log("App - user:", user, "loading:", loading);
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public route */}
         <Route path="/entrar" element={<Login />} />
-        {/* Protected routes (wrapped by PrivateRoute with Layout) */}
+        <Route path="/registrar" element={<Register />} />
+
         <Route
           path="/home"
           element={
@@ -57,7 +57,7 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        {/* Fallback */}
+
         <Route path="*" element={<Navigate to="/entrar" replace />} />
       </Routes>
     </BrowserRouter>

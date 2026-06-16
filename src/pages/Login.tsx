@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import Register from "./Register";
 
 const Login = () => {
   // Limpa qualquer dado de autenticação persistido ao abrir a página
