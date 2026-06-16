@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * Página de login que força autenticação com e-mail e senha.
+ */
 const Login = () => {
   // Clear any persisted auth data when the login page loads
   useEffect(() => {
@@ -28,7 +31,9 @@ const Login = () => {
     });
 
     if (error) {
-      setErrorMessage(error.message);
+      // Log detailed error for debugging
+      console.error("Sign-in error:", error);
+      setErrorMessage(error.message || "Falha ao fazer login");
       setLoading(false);
       return;
     }
@@ -45,7 +50,9 @@ const Login = () => {
     const { error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
-      setErrorMessage(error.message);
+      // Log detailed error for debugging
+      console.error("Sign-up error:", error);
+      setErrorMessage(error.message || "Falha ao criar conta");
       setLoading(false);
       return;
     }
