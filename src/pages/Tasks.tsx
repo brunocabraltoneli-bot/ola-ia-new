@@ -149,12 +149,15 @@ const Tasks = () => {
     }
   };
 
-  const editTask = (task: Task) => {
+  const editTask = (taskId: number) => {
     if (!confirmEdit || !confirmEdit.taskId) return;
 
-    setEditingTask(task);
-    setTitle(task.titulo);
-    setShowForm(true);
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      setEditingTask(task);
+      setTitle(task.titulo);
+      setShowForm(true);
+    }
   };
 
   if (authLoading) {
@@ -345,23 +348,23 @@ const ConfirmDialog = ({ confirmDelete, confirmEdit }) => {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-30">
       <div className="bg-white rounded-2xl p-6 w-full max-w-md">
         <h3 className="text-xl font-bold text-gray-800 mb-4">
-          {action === 'delete' ? 'Delete Task' : 'Edit Task'}
+          {action === 'delete' ? 'Excluir Tarefa' : 'Editar Tarefa'}
         </h3>
         <p className="text-gray-600 mb-4">
-          Are you sure you want to {action === 'delete' ? 'delete' : 'edit'} this task?
+          {action === 'delete' ? 'Tem certeza de que deseja excluir esta tarefa?' : 'Tem certeza de que deseja editar esta tarefa?'}
         </p>
         <div className="flex justify-end gap-2">
           <button
             onClick={() => setIsOpen(false)}
             className="bg-gray-100 text-gray-700 py-2 rounded-xl hover:bg-gray-200 transition-colors"
           >
-            Cancel
+            Cancelar
           </button>
           <button
             onClick={handleConfirm}
             className="bg-purple-600 text-white py-2 rounded-xl hover:bg-purple-700 transition-colors"
           >
-            Confirm
+            Confirmar
           </button>
         </div>
       </div>
