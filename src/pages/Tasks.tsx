@@ -146,9 +146,12 @@ const Tasks = () => {
   };
 
   const editTask = (task: Task) => {
-    setEditingTask(task);
-    setTitle(task.titulo);
-    setShowForm(true);
+    // Add confirmation before editing
+    if (window.confirm("Tem certeza que deseja editar esta tarefa? Esta ação não pode ser desfeita.")) {
+      setEditingTask(task);
+      setTitle(task.titulo);
+      setShowForm(true);
+    }
   };
 
   if (authLoading) {
