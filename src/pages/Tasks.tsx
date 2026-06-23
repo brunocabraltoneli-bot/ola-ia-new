@@ -26,10 +26,6 @@ const Tasks = () => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [title, setTitle] = useState("");
 
-  // New state for confirmation dialogs
-  const [confirmDelete, setConfirmDelete] = useState<{ taskId: number } | null>(null);
-  const [confirmEdit, setConfirmEdit] = useState<{ taskId: number } | null>(null);
-
   const fetchTasks = async () => {
     if (!user) {
       setTasks([]);
@@ -132,7 +128,7 @@ const Tasks = () => {
 
   const deleteTask = async (id: number) => {
     if (!user) return;
-    if (!confirmDelete || !confirmDelete.taskId) return;
+    if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
 
     const { error } = await supabase
       .from("tarefas")
@@ -149,15 +145,10 @@ const Tasks = () => {
     }
   };
 
-  const editTask = (taskId: number) => {
-    if (!confirmEdit || !confirmEdit.taskId) return;
-
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-      setEditingTask(task);
-      setTitle(task.titulo);
-      setShowForm(true);
-    }
+  const editTask = (task: Task) => {
+    setEditingTask(task);
+    setTitle(task.titulo);
+    setShowForm(true);
   };
 
   if (authLoading) {
@@ -291,13 +282,13 @@ const Tasks = () => {
                     <Check size={18} />
                   </button>
                   <button
-                    onClick={() => setConfirmEdit({ taskId: task.id })}
+                    onClick={() => editTask(task)}
                     className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
                   >
                     <Edit2 size={18} />
                   </button>
                   <button
-                    onClick={() => setConfirmDelete({ taskId: task.id })}
+                    onClick={() => deleteTask(task.id)}
                     className="p-2 rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
                   >
                     <Trash2 size={18} />
@@ -307,66 +298,6 @@ const Tasks = () => {
             ))}
           </div>
         )}
-      </div>
-
-      {/* Confirmation Dialog */}
-      {confirmDelete || confirmEdit && (
-        <ConfirmDialog
-          confirmDelete={confirmDelete}
-          confirmEdit={confirmEdit}
-        />
-      )}
-    </div>
-  );
-};
-
-// Confirmation Dialog Component
-const ConfirmDialog = ({ confirmDelete, confirmEdit }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [action, setAction] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (confirmDelete) {
-      setIsOpen(true);
-      setAction('delete');
-    } else if (confirmEdit) {
-      setIsOpen(true);
-      setAction('edit');
-    }
-  }, [confirmDelete, confirmEdit]);
-
-  const handleConfirm = () => {
-    if (action === 'delete') {
-      deleteTask(confirmDelete.taskId);
-    } else if (action === 'edit') {
-      editTask(confirmEdit.taskId);
-    }
-    setIsOpen(false);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-30">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">
-          {action === 'delete' ? 'Excluir Tarefa' : 'Editar Tarefa'}
-        </h3>
-        <p className="text-gray-600 mb-4">
-          {action === 'delete' ? 'Tem certeza de que deseja excluir esta tarefa?' : 'Tem certeza de que deseja editar esta tarefa?'}
-        </p>
-        <div className="flex justify-end gap-2">
-          <button
-            onClick={() => setIsOpen(false)}
-            className="bg-gray-100 text-gray-700 py-2 rounded-xl hover:bg-gray-200 transition-colors"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleConfirm}
-            className="bg-purple-600 text-white py-2 rounded-xl hover:bg-purple-700 transition-colors"
-          >
-            Confirmar
-          </button>
-        </div>
       </div>
     </div>
   );
